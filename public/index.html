@@ -16,28 +16,75 @@
         justify-content: center;
         min-height: 100vh;
       }
-      h1 {
-        color: #333;
-        margin-bottom: 0.5em;
+      .duude-btn {
+        display: block;
+        width: calc(100vw - 3rem);
+        max-width: 500px;
+        min-height: 200px;
+        font-size: 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        background: url("crush.png") center center / cover no-repeat;
+        color: #fff;
+        border: none;
+        border-radius: 16px;
       }
-      p {
-        color: #555;
-        margin-top: 0;
+
+      .duude-response {
+        display: block;
+        width: calc(100vw - 3rem);
+        max-width: 500px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 1rem;
+
       }
-      .card {
-        background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-        padding: 2em 3em;
-        text-align: center;
+
+      .duude-btn:active {
+        transform: scale(0.98);
+        background: linear-gradient(90deg, #0072ff 0%, #00c6ff 100%);
       }
     </style>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const btn = document.querySelector('.duude-btn');
+        let responseDiv = document.querySelector('.duude-response');
+
+        btn.addEventListener('click', async function () {
+          btn.disabled = true;
+          try {
+            const res = await fetch('/send', {
+              method: 'post',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({datetime: new Date().toISOString()})
+            });
+            if (!res.ok) 
+              throw new Error('Request failed');
+            const data = await res.json();
+            console.log('data', data)
+            // Show message and datetime
+            responseDiv.textContent = `sent ${data.datetime || ''}`;
+            responseDiv.style.opacity = '1';
+            setTimeout(() => {
+              responseDiv.style.opacity = '0';
+            }, 1000);
+            // Removed display:block to ensure opacity change only
+            btn.disabled = false;
+          } catch (e) {
+            console.error(e);
+            btn.textContent = 'error';
+          }
+        });
+      });
+    </script>
   </head>
   <body>
-    <div class="card">
-      <h1>Duude Serverless</h1>
-      <p>Welcome to your Netlify serverless project.<br>
-    This page is served from <code>/public/index.html</code>.</p>
-    </div>
+    <button class="duude-btn">duuuude</button>
+    <div class="duude-response">&nbsp;</div>
   </body>
 </html>
